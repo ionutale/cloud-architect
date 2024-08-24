@@ -20,16 +20,22 @@ EOF
 gcloud compute instance-templates create nginx-template \
   --machine-type=g1-small \
   --metadata-from-file startup-script=startup.sh
+  --region $REGION
 echo "Instance template created"
-
 
 #Create a managed instance group based on the template.
 gcloud compute instance-groups managed create nginx-group \
-  --base-instance-name=nginx \
+  --base-instance-name web-server \
   --size=2 \
-  --template=nginx-template \
+  --template nginx-template \
   --region $REGION
 echo "Managed instance group created"
+
+gcloud compute instance-groups managed \
+        set-named-ports nginx-group \
+        --named-ports http:80 \
+        --region $REGION
+echo "Named ports set"
 
 #Create a firewall rule named as grant-tcp-rule-264 to allow traffic (80/tcp).
 gcloud compute firewall-rules create $FIREWALL \
