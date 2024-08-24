@@ -1,10 +1,6 @@
-export INSTANCE=nucleus-jumphost-922
-export FIREWALL=accept-tcp-rule-397
-export ZONE=europe-west1-b
 export REGION="${ZONE%-*}"
 
 # step 1
-
 gcloud compute instances create $INSTANCE \
   --zone=$ZONE \
   --machine-type=e2-micro
@@ -22,7 +18,7 @@ EOF
 
 # Create an instance template. Don't use the default machine type. Make sure you specify e2-medium as the machine type and create the Global template.
 gcloud compute instance-templates create nginx-template \
-  --machine-type=e2-medium \
+  --machine-type=g1-small \
   --metadata-from-file startup-script=startup.sh
 echo "Instance template created"
 
@@ -32,7 +28,7 @@ gcloud compute instance-groups managed create nginx-group \
   --base-instance-name=nginx \
   --size=2 \
   --template=nginx-template \
-  --zone=$ZONE
+  --region $REGION
 echo "Managed instance group created"
 
 #Create a firewall rule named as grant-tcp-rule-264 to allow traffic (80/tcp).
@@ -56,7 +52,7 @@ echo "Backend service created"
 
 gcloud compute backend-services add-backend nginx-backend \
   --instance-group=nginx-group \
-  --instance-group-zone=$ZONE \
+  --instance-group-region=$REGION \
   --global
 echo "Backend service added"
 
