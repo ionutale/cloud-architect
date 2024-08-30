@@ -64,7 +64,7 @@ echo "Backend service added"
 
 #Create a URL map, and target the HTTP proxy to route the incoming requests to the default backend service.
 gcloud compute url-maps create web-map \
-  --default-service=nginx-backend
+  --default-service=web-server-backend
 echo "URL map created"
 
 #Create a target HTTP proxy to route requests to your URL map
